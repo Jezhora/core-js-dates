@@ -255,9 +255,28 @@ function getWeekNumberByDate(date) {
  * Date(2024, 0, 13) => Date(2024, 8, 13)
  * Date(2023, 1, 1) => Date(2023, 9, 13)
  */
-function getNextFridayThe13th(/* date */) {
-  throw new Error('Not implemented');
+function getNextFridayThe13th(date) {
+  let year = date.getFullYear();
+  let month = date.getMonth();
+
+  let friday13 = new Date(year, month, 13);
+
+  for (let i = month; i <= 12; i += 1) {
+    month = i;
+    friday13 = new Date(year, month, 13);
+    if (friday13.getDay() === 5) {
+      break;
+    }
+    if (i === 12) {
+      i = 0;
+      year += 1;
+    }
+  }
+
+  return friday13;
 }
+// const d = new Date(2024, 0, 13);
+// console.log(getNextFridayThe13th(d));
 
 /**
  * Returns the quarter of the year for a given date.
@@ -270,10 +289,12 @@ function getNextFridayThe13th(/* date */) {
  * Date(2024, 5, 1) => 2
  * Date(2024, 10, 10) => 4
  */
-function getQuarter(/* date */) {
-  throw new Error('Not implemented');
+function getQuarter(date) {
+  const month = date.getMonth();
+  return Math.ceil((month + 1) / 3);
 }
-
+// const d = new Date(2024, 5, 1);
+// console.log(getQuarter(d));
 /**
  * Generates an employee's work schedule within a specified date range, based on a pattern of working and off days.
  * The start and end dates of the period are inclusive.
