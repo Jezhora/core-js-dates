@@ -163,8 +163,25 @@ function isDateInPeriod(date, period) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-function formatDate(/* date */) {
-  throw new Error('Not implemented');
+function formatDate(date) {
+  const currentDay = new Date(date);
+
+  const year = currentDay.getUTCFullYear();
+  const day = currentDay.getUTCDate();
+  const month = currentDay.getUTCMonth() + 1;
+
+  let hours = currentDay.getUTCHours();
+  const minutes = currentDay.getUTCMinutes().toString().padStart(2, '0');
+  const seconds = currentDay.getUTCSeconds().toString().padStart(2, '0');
+
+  const amPM = hours >= 12 ? 'PM' : 'AM';
+  hours %= 12;
+
+  if (hours === 0) {
+    hours = 12;
+  }
+
+  return `${month}/${day}/${year}, ${hours}:${minutes}:${seconds} ${amPM}`;
 }
 
 /**
@@ -179,9 +196,24 @@ function formatDate(/* date */) {
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountWeekendsInMonth(month, year) {
+  const date = new Date(year, month - 1, 1);
+
+  let count = 0;
+
+  while (date.getMonth() === month - 1) {
+    const day = date.getDay();
+
+    if (day === 0 || day === 6) {
+      count += 1;
+    }
+
+    date.setDate(date.getDate() + 1);
+  }
+
+  return count;
 }
+// console.log(getCountWeekendsInMonth(5, 2022));
 
 /**
  * Returns the week number of the year for a given date.
@@ -196,10 +228,22 @@ function getCountWeekendsInMonth(/* month, year */) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* date */) {
-  throw new Error('Not implemented');
-}
+function getWeekNumberByDate(date) {
+  const firstDay = new Date(date.getFullYear(), 0, 1).getDay() || 7;
 
+  const firstWeekDays = 8 - firstDay;
+
+  let totalDays = 0;
+  for (let month = 0; month < date.getMonth(); month += 1) {
+    totalDays += new Date(date.getFullYear(), month + 1, 0).getDate();
+  }
+
+  const dayOfMonth = date.getDate();
+
+  return Math.ceil((totalDays + dayOfMonth - firstWeekDays) / 7) + 1;
+}
+// const d = new Date(2017, 7, 21);
+// console.log(getWeekNumberByDate(d));
 /**
  * Returns the date of the next Friday the 13th from a given date.
  * Friday the 13th is considered an unlucky day in some cultures.
